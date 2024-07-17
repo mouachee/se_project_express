@@ -11,7 +11,7 @@ mongoose
     console.log("Connect to DB");
   })
   .catch(console.error);
-
+app.use(express.json());
 app.use("/", mainRouter);
 
 app.listen(PORT, () => {
