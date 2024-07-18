@@ -1,4 +1,5 @@
 const ClothingItem = require("../models/clothingItem");
+const { INTERNAL_SERVER_ERROR } = require("../utils/errors");
 
 const createItem = (req, res) => {
   console.log(req);
@@ -12,14 +13,18 @@ const createItem = (req, res) => {
       res.send({ data: item });
     })
     .catch((err) => {
-      return res.status(500).send({ message: "Error from createItem", err });
+      return res
+        .status(INTERNAL_SERVER_ERROR)
+        .send({ message: "Error from createItem", err });
     });
 };
 const getItems = (req, res) => {
   ClothingItem.find({})
     .then((items) => res.status(200).send(items))
     .catch((err) => {
-      res.status(500).send({ message: "Error from getItems" }, err);
+      res
+        .status(INTERNAL_SERVER_ERROR)
+        .send({ message: "Error from getItems" }, err);
     });
 };
 
@@ -31,7 +36,9 @@ const updateItems = (req, res) => {
     .orFail()
     .then((item) => res.status(200).send({ data: item }))
     .catch((err) => {
-      res.status(500).send({ message: "Error from updateItems" }, err);
+      res
+        .status(INTERNAL_SERVER_ERROR)
+        .send({ message: "Error from updateItems" }, err);
     });
 };
 const deleteItems = (req, res) => {
@@ -42,7 +49,9 @@ const deleteItems = (req, res) => {
     .orFail()
     .then((item) => res.status(204).send({}))
     .catch((err) => {
-      res.status(500).send({ message: "Error from deleteItems" }, err);
+      res
+        .status(INTERNAL_SERVER_ERROR)
+        .send({ message: "Error from deleteItems" }, err);
     });
 };
 module.exports = {
