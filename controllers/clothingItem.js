@@ -5,18 +5,18 @@ const createItem = (req, res) => {
   console.log(req);
   console.log(res.body);
 
-  const { name, weather, imageUrl } = req.body;
+  const { name, weather, imageUrl, owner } = req.body;
 
-  ClothingItem.create({ name, weather, imageUrl })
+  ClothingItem.create({ name, weather, imageUrl, owner })
     .then((item) => {
       console.log(item);
       res.send({ data: item });
     })
-    .catch((err) => {
-      return res
+    .catch((err) =>
+      res
         .status(INTERNAL_SERVER_ERROR)
-        .send({ message: "Error from createItem", err });
-    });
+        .send({ message: "Error from createItem", err })
+    );
 };
 const getItems = (req, res) => {
   ClothingItem.find({})
@@ -47,13 +47,21 @@ const deleteItems = (req, res) => {
   console.log(itemId);
   ClothingItem.findByIdAndDelete(itemId)
     .orFail()
-    .then((item) => res.status(204).send({}))
+    .then(() => res.status(204).send({}))
     .catch((err) => {
       res
         .status(INTERNAL_SERVER_ERROR)
         .send({ message: "Error from deleteItems" }, err);
     });
 };
+// const likeItem = (req, res) =>
+//   ClothingItem.findByIdAndUpdate(
+//     req.params.itemId,
+//     { $addToSet: { likes: req.user._id } }, // add _id to the array if it's not there yet
+//     { new: true }
+//   );
+// //...
+
 module.exports = {
   createItem,
   getItems,
