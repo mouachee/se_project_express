@@ -18,37 +18,24 @@ const createItem = (req, res) => {
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
-        res.status(BAD_REQUEST).send({ message: "Error from createItem", err });
+        res.status(BAD_REQUEST).send({ message: "Error from createItem" });
       } else {
         res
           .status(INTERNAL_SERVER_ERROR)
-          .send({ message: "Error from createItem", err });
+          .send({ message: "An error has occurred on the server" });
       }
     });
 };
 const getItems = (req, res) => {
   ClothingItem.find({})
     .then((items) => res.status(200).send(items))
-    .catch((err) => {
+    .catch(() => {
       res
         .status(INTERNAL_SERVER_ERROR)
-        .send({ message: "Error from getItems" }, err);
+        .send({ message: "An error has occurred on the server" });
     });
 };
 
-const updateItems = (req, res) => {
-  const { itemId } = req.params;
-  const { imageUrl } = req.body;
-
-  ClothingItem.findByIdAndUpdate(itemId, { $set: { imageUrl } })
-    .orFail()
-    .then((item) => res.status(200).send({ data: item }))
-    .catch((err) => {
-      res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: "Error from updateItems" }, err);
-    });
-};
 const deleteItems = (req, res) => {
   const { itemId } = req.params;
 
@@ -70,7 +57,7 @@ const deleteItems = (req, res) => {
       }
       return res
         .status(INTERNAL_SERVER_ERROR)
-        .send({ message: "Error from deleteItems" });
+        .send({ message: "An error has occurred on the server" });
     });
 };
 const likeItem = (req, res) =>
@@ -91,7 +78,7 @@ const likeItem = (req, res) =>
       }
       return res
         .status(INTERNAL_SERVER_ERROR)
-        .send({ message: "Error from likeItem" });
+        .send({ message: "An error has occurred on the server" });
     });
 const dislikeItem = (req, res) =>
   ClothingItem.findByIdAndUpdate(
@@ -115,12 +102,11 @@ const dislikeItem = (req, res) =>
       }
       return res
         .status(INTERNAL_SERVER_ERROR)
-        .send({ message: "Error from likeItem" });
+        .send({ message: "An error has occurred on the server" });
     });
 module.exports = {
   createItem,
   getItems,
-  updateItems,
   deleteItems,
   likeItem,
   dislikeItem,
