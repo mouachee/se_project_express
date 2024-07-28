@@ -1,9 +1,15 @@
 const User = require("../models/user");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+
 const {
   BAD_REQUEST,
   NOT_FOUND,
+  CONFLICT,
   INTERNAL_SERVER_ERROR,
+  UNAUTHORIZED,
 } = require("../utils/errors");
+const { JWT_SECRET } = require("../utils/config");
 // GET users
 
 const getUsers = (req, res) => {
@@ -18,19 +24,29 @@ const getUsers = (req, res) => {
     );
 };
 const createUser = (req, res) => {
-  const { name, avatar } = req.body;
-  User.create({ name, avatar })
-    .then((user) => res.status(201).send(user))
-    .catch((err) => {
-      if (err.name === "ValidationError") {
+  const { name, avatar, email, password } = req.body;
+
+  bcrypt.hash(password, 10).then((hash) =>
+    User.create({ name, avatar, email, password: hash })
+      .then((user) => {
+        res
+          .status(201)
+          .send({ name: user.name, avatar: user.avatar, email: user.email });
+      })
+      .catch((err) => {
+        if (err.code === 11000) {
+          return res.status(CONFLICT).send({ message: "Email already exist" });
+        }
+        if (err.name === "ValidationError") {
+          return res
+            .status(BAD_REQUEST)
+            .send({ message: "Error from createuser" });
+        }
         return res
-          .status(BAD_REQUEST)
-          .send({ message: "Error from createuser" });
-      }
-      return res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: "An error has occurred on the server" });
-    });
+          .status(INTERNAL_SERVER_ERROR)
+          .send({ message: "An error has occurred on the server" });
+      })
+  );
 };
 
 const getUser = (req, res) => {
@@ -51,5 +67,20 @@ const getUser = (req, res) => {
         .send({ message: "An error has occurred on the server" });
     });
 };
+const login = (req, res) => {
+  const { email, password } = req.body;
 
-module.exports = { getUsers, createUser, getUser };
+  return User.findUserByCredentials(email, password).then((user) => {
+    res
+      .send({
+        token: jwt.sign({ _id: user._id }, JWT_SECRET, {
+          expiresIn: "7d",
+        }),
+      })
+      .catch((err) => {
+        res.status(UNAUTHORIZED).send({ message: "Invalid token" });
+      });
+  });
+};
+
+module.exports = { getUsers, createUser, getUser, login };

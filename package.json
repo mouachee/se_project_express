@@ -11,7 +11,9 @@
   "author": "Mouachee Thao",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^6.6.1",
     "validator": "^13.12.0"
   },
