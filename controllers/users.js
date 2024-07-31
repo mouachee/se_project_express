@@ -1,5 +1,5 @@
-const User = require("../models/user");
 const bcrypt = require("bcrypt");
+const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 
 const {
@@ -88,17 +88,18 @@ const getUser = (req, res) => {
 const login = (req, res) => {
   const { email, password } = req.body;
 
-  return User.findUserByCredentials(email, password).then((user) => {
-    res
-      .send({
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      res.status(200).send({
         token: jwt.sign({ _id: user._id }, JWT_SECRET, {
           expiresIn: "7d",
         }),
-      })
-      .catch(() => {
-        res.status(UNAUTHORIZED).send({ message: "Invalid token" });
       });
-  });
+    })
+    .catch(() => {
+      console.error("error during login");
+      res.status(BAD_REQUEST).send({ message: "Invalid token" });
+    });
 };
 
 const getCurrentUser = (req, res) => {
@@ -110,7 +111,15 @@ const getCurrentUser = (req, res) => {
       res.status(200).send(user);
     })
     .catch(() => {
-      res
+      if (err.name === "DocumentNotFoundError") {
+        return res.status(NOT_FOUND).send({ message: "Error user not found" });
+      }
+      if (err.name === "CastError") {
+        return res
+          .status(BAD_REQUEST)
+          .send({ message: "Error from getCurrentUser" });
+      }
+      return res
         .status(INTERNAL_SERVER_ERROR)
         .send({ message: "An error has occurred on the server" });
     });
