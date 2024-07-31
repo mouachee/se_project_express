@@ -29,16 +29,20 @@ const createUser = (req, res) => {
   User.findOne({ email })
     .then((existingEmail) => {
       if (existingEmail) {
-        return res.status(CONFLICT).send({ message: "Email already exists" });
+        const error = new Error("Email already exists");
+        error.code = 11000;
+        throw error;
       }
       return bcrypt.hash(password, 10);
     })
     .then((hash) => {
       User.create({ name, avatar, email, password: hash })
         .then((user) => {
-          res
-            .status(201)
-            .send({ name: user.name, avatar: user.avatar, email: user.email });
+          res.status(201).send({
+            name: user.name,
+            avatar: user.avatar,
+            email: user.email,
+          });
         })
         .catch((err) => {
           if (err.code === 11000) {
@@ -98,14 +102,7 @@ const getCurrentUser = (req, res) => {
   User.findById(userId)
     .orFail()
     .then((user) => {
-      if (!user) {
-        return res.status(NOT_FOUND).send({ message: "User not found" });
-      }
-      res.status(200).send({
-        name: user.name,
-        avatar: user.avatar,
-        email: user.email,
-      });
+      res.status(200).send(user);
     })
     .catch(() => {
       res
