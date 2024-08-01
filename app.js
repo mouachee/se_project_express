@@ -1,5 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const cors = require("cors");
 const mainRouter = require("./routes/index");
 const authMiddleware = require("./middlewares/auth");
 
@@ -13,13 +14,9 @@ mongoose
   })
   .catch(console.error);
 
-// app.use((req, res, next) => {
-//   req.user = {
-//     _id: "5d8b8592978f8bd833ca8133", // paste the _id of the test user created in the previous step
-//   };
-//   next();
-// });
 app.use(express.json());
+app.use(cors());
+
 app.use("/", mainRouter);
 app.use(authMiddleware);
 
