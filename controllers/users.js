@@ -20,7 +20,7 @@ const createUser = (req, res) => {
       .send({ message: "An email address is required." });
   }
 
-  User.findOne({ email })
+  return User.findOne({ email })
     .then((existingEmail) => {
       if (existingEmail) {
         const error = new Error("Email already exists");
