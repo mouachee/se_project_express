@@ -33,11 +33,11 @@ const getItems = (req, res, next) => {
 };
 
 const deleteItems = (req, res, next) => {
-  const { itemId } = req.params;
+  const { id } = req.params;
   const userId = req.user._id;
 
-  console.log(itemId);
-  ClothingItem.findById(itemId)
+  console.log(id);
+  ClothingItem.findById(id)
     .orFail()
     .then((item) => {
       if (item.owner.toString() !== userId) {
@@ -45,7 +45,7 @@ const deleteItems = (req, res, next) => {
           new ForbiddenError("You do not have permission to delete this item")
         );
       }
-      return ClothingItem.findByIdAndDelete(itemId).then(() =>
+      return ClothingItem.findByIdAndDelete(id).then(() =>
         res.status(200).send({ message: "Item deleted successfully" })
       );
     })
@@ -60,9 +60,9 @@ const deleteItems = (req, res, next) => {
       return next(err);
     });
 };
-const likeItem = (req, res, next) =>
+const likeItem = (req, res, next) => {
   ClothingItem.findByIdAndUpdate(
-    req.params.itemId,
+    req.params.id,
     { $addToSet: { likes: req.user._id } },
     { new: true }
   )
@@ -78,9 +78,11 @@ const likeItem = (req, res, next) =>
       }
       return next(err);
     });
-const dislikeItem = (req, res, next) =>
+};
+
+const dislikeItem = (req, res, next) => {
   ClothingItem.findByIdAndUpdate(
-    req.params.itemId,
+    req.params.id,
     { $pull: { likes: req.user._id } },
     { new: true }
   )
@@ -96,6 +98,7 @@ const dislikeItem = (req, res, next) =>
       }
       return next(err);
     });
+};
 module.exports = {
   createItem,
   getItems,
