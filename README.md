@@ -15,3 +15,11 @@ Before committing your code, make sure you edit the file `sprint.txt` in the roo
 # SPRINT 12 PROJECT
 
 This back-end project utilizes Mongoose to establish a connection between a Node.js application and a MongoDB database. The project involves defining schemas to structure the data and handles various types of requests to the server. Specifically, it supports operations to get, create, and delete items and users.
+
+# Frontend Domain
+
+**[wtwr-domain.ignorelist.com](http://wtwr-domain.ignorelist.com)**
+
+# Backend Domain
+
+**[api.wtwr-domain.ignorelist.com](http://api.wtwr-domain.ignorelist.com)**

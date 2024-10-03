@@ -17,7 +17,7 @@ module.exports.validateItemBody = celebrate({
     }),
     imageUrl: Joi.string().required().custom(validateURL).messages({
       "string.empty": 'The "imageUrl" field must be filled in',
-      "string.uri": 'the "imageUrl" field must be a valid url',
+      "string.uri": 'the "imageUrl" field must be a valid URL',
     }),
     weather: Joi.string().required().valid("cold", "warm", "hot").messages({
       "any.required": 'The "weatherOption" field must be selected',
@@ -35,7 +35,7 @@ module.exports.validateUserCreatedBody = celebrate({
     }),
     avatar: Joi.string().required().custom(validateURL).messages({
       "string.empty": 'The "avatar" field must be filled in',
-      "string.uri": 'the "avatar" field must be a valid url',
+      "string.uri": 'the "avatar" field must be a valid URL',
     }),
     email: Joi.string().required().messages({
       "string.empty": 'The "email" field must be filled in',
@@ -66,6 +66,20 @@ module.exports.validateId = celebrate({
     id: Joi.string().length(24).hex().required().messages({
       "string.length": "ID must be 24 characters long",
       "string.hex": "ID must be a valid hexadecimal string",
+    }),
+  }),
+});
+
+module.exports.validateUserUpdate = celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().required().min(2).max(30).messages({
+      "string.min": 'The minimum length of the "name" field is 2',
+      "string.max": 'The maximum length of the "name" field is 30',
+      "string.empty": 'The "name" field must be filled in',
+    }),
+    avatar: Joi.string().required().custom(validateURL).messages({
+      "string.empty": 'The "avatar" field must be filled in',
+      "string.uri": 'the "avatar" field must be a valid URL',
     }),
   }),
 });
